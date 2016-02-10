@@ -69,11 +69,6 @@ public class Alphabet implements Serializable
         // /deserializedEntries.putIfAbsent(instanceId, this);
 	}
 
-    public static void clearDeserializedEntriesAndStopMemoryLeak()
-    {
-        deserializedEntries.clear();
-    }
-
 	public Alphabet (Class entryClass)
 	{
 		this (8, entryClass);
@@ -388,7 +383,14 @@ public class Alphabet implements Serializable
 
 	public Object readResolve() throws ObjectStreamException {
 
+		return this;
+
         /**
+		 *
+		 * SEAL hack:   never cache alphabets
+		 *
+		 *
+		 *
     }
 		Object previous = deserializedEntries.get(instanceId);
 		if (previous != null){
@@ -399,14 +401,15 @@ public class Alphabet implements Serializable
             Object prev = deserializedEntries.putIfAbsent(instanceId, this);
             if (prev != null) {
                 return prev;
-                //    }
-        //}
+		 }
+        }
 		System.out.println(" *** Alphabet ReadResolve: new instance. instance id= " + instanceId);
 
+		 return this;
 
-        // never save off "previous" objects
+
 
          */
-        return this;
+
 	}
 }
