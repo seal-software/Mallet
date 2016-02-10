@@ -67,6 +67,11 @@ public class Alphabet implements Serializable
 		deserializedEntries.putIfAbsent(instanceId, this);
 	}
 
+    public static void clearDeserializedEntriesAndStopMemoryLeak()
+    {
+        deserializedEntries.clear();
+    }
+
 	public Alphabet (Class entryClass)
 	{
 		this (8, entryClass);
