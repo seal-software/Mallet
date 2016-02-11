@@ -64,13 +64,10 @@ public class Alphabet implements Serializable
 		this.entries = new ArrayList (capacity);
 		this.entryClass = entryClass;
 		// someone could try to deserialize us into this image (e.g., by RMI).  Handle this.
-		deserializedEntries.putIfAbsent(instanceId, this);
-	}
 
-    public static void clearDeserializedEntriesAndStopMemoryLeak()
-    {
-        deserializedEntries.clear();
-    }
+        // seal hack:  never cache  entries
+        // /deserializedEntries.putIfAbsent(instanceId, this);
+	}
 
 	public Alphabet (Class entryClass)
 	{
@@ -373,7 +370,7 @@ public class Alphabet implements Serializable
         }
     }
 
-	private transient static ConcurrentMap<VMID,Object> deserializedEntries = new ConcurrentHashMap<VMID,Object>();
+	//private transient static ConcurrentMap<VMID,Object> deserializedEntries = new ConcurrentHashMap<VMID,Object>();
 
 	/**
 	 * This gets called after readObject; it lets the object decide whether
@@ -385,6 +382,16 @@ public class Alphabet implements Serializable
 	 */
 
 	public Object readResolve() throws ObjectStreamException {
+
+		return this;
+
+        /**
+		 *
+		 * SEAL hack:   never cache alphabets
+		 *
+		 *
+		 *
+    }
 		Object previous = deserializedEntries.get(instanceId);
 		if (previous != null){
 			//System.out.println(" ***Alphabet ReadResolve:Resolving to previous instance. instance id= " + instanceId);
@@ -394,9 +401,15 @@ public class Alphabet implements Serializable
             Object prev = deserializedEntries.putIfAbsent(instanceId, this);
             if (prev != null) {
                 return prev;
-            }
+		 }
         }
-		//System.out.println(" *** Alphabet ReadResolve: new instance. instance id= " + instanceId);
-		return this;
+		System.out.println(" *** Alphabet ReadResolve: new instance. instance id= " + instanceId);
+
+		 return this;
+
+
+
+         */
+
 	}
 }
