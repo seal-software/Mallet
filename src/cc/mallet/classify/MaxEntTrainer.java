@@ -251,11 +251,11 @@ public class MaxEntTrainer extends ClassifierTrainer<MaxEnt>
 			try {
 				finishedTraining = optimizer.optimize (1);
 		  } catch (InvalidOptimizableException e) {
-			  e.printStackTrace();
+			  logger.warning(e.getMessage());
 			  logger.warning("Catching InvalidOptimizatinException! saying converged.");
 			  finishedTraining = true;
 			} catch (OptimizationException e) {
-				e.printStackTrace();
+				logger.warning(e.getMessage());
 				logger.info ("Catching OptimizationException; saying converged.");
 				finishedTraining = true;
 			}
@@ -273,11 +273,11 @@ public class MaxEntTrainer extends ClassifierTrainer<MaxEnt>
 			try {
 				finishedTraining = optimizer.optimize ();
 		  } catch (InvalidOptimizableException e) {
-			  e.printStackTrace();
-			  logger.warning("Catching InvalidOptimizatinException! saying converged.");
-			  finishedTraining = true;
+				logger.warning(e.getMessage());
+			  	logger.warning("Catching InvalidOptimizatinException! saying converged.");
+			  	finishedTraining = true;
 			} catch (OptimizationException e) {
-				e.printStackTrace();
+				logger.warning(e.getMessage());
 				logger.info ("Catching OptimizationException; saying converged.");
 				finishedTraining = true;
 			}
