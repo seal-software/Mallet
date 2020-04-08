@@ -5,6 +5,13 @@
   <artifactId>mallet</artifactId>
   <version>2.0.10-SNAPSHOT</version>
   <packaging>jar</packaging>
+
+  <parent>
+    <groupId>com.seal</groupId>
+    <artifactId>masterpom</artifactId>
+    <version>3.0.0-43</version>
+  </parent>
+
   <name>MAchine Learning for LanguagE Toolkit (MALLET)</name>
   <description>
     MALLET is a Java-based package for statistical natural language processing,
@@ -22,7 +29,7 @@
   <!--scm>
     <url>https://github.com/mimno/Mallet</url>
     <connection>scm:git:git://github.com/mimno/Mallet.git</connection>
-    <developerConnection>scm:git:git@github.com:mimno/Mallet.git</developerConnection>
+    <developerConnection>scm:git:git@github.com:mim no/Mallet.git</developerConnection>
   </scm-->
   <developers>
     <developer>
@@ -55,7 +62,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <!--<version>2.6</version>-->
         <executions>
           <execution>
             <id>copy-resources</id>
@@ -80,8 +87,25 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration combine.self="override"><!-- override masterpom -->
+          <compilerId>javac</compilerId>
+          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+          <fork>true</fork>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <compilerArgs>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.1</version>
+        <!--<version>2.22.1</version>-->
         <configuration>
           <excludedGroups>integration-test</excludedGroups>
           <skipTests>${skipUTs}</skipTests>
@@ -92,7 +116,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-failsafe-plugin</artifactId>
-        <version>3.0.0-M3</version>
+        <!--<version>3.0.0-M3</version>-->
         <executions>
           <execution>
             <goals>
@@ -118,7 +142,7 @@
       <plugin>
         <groupId>org.openclover</groupId>
         <artifactId>clover-maven-plugin</artifactId>
-        <version>4.4.1</version>
+        <!--<version>4.4.1</version>-->
       </plugin>
     </plugins>
   </build>
@@ -141,6 +165,8 @@
       </build>
     </profile>
 
+    <!--
+    using masterpom definition for now
     <profile>
       <id>clover.report</id>
       <build>
@@ -159,7 +185,7 @@
           </plugin>
         </plugins>
       </reporting>
-    </profile>
+    </profile-->
   </profiles>
 
   <dependencies>
@@ -199,11 +225,4 @@
       <version>1.1</version>
     </dependency>
   </dependencies>
-	<distributionManagement>
-		<repository>
-			<id>seal-snapshots</id>
-			<name>seal-snapshots</name>
-			<url>http://nexus.seal-software.net/content/repositories/snapshots</url>
-		</repository>
-	</distributionManagement>
 </project>
