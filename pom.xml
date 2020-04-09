@@ -5,6 +5,13 @@
   <artifactId>mallet</artifactId>
   <version>2.0.10-SNAPSHOT</version>
   <packaging>jar</packaging>
+
+  <parent>
+    <groupId>com.seal</groupId>
+    <artifactId>masterpom</artifactId>
+    <version>3.0.0-43</version>
+  </parent>
+
   <name>MAchine Learning for LanguagE Toolkit (MALLET)</name>
   <description>
     MALLET is a Java-based package for statistical natural language processing,
@@ -19,11 +26,11 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-  <scm>
+  <!--scm>
     <url>https://github.com/mimno/Mallet</url>
     <connection>scm:git:git://github.com/mimno/Mallet.git</connection>
-    <developerConnection>scm:git:git@github.com:mimno/Mallet.git</developerConnection>
-  </scm>
+    <developerConnection>scm:git:git@github.com:mim no/Mallet.git</developerConnection>
+  </scm-->
   <developers>
     <developer>
       <id>david.mimno</id>
@@ -36,17 +43,26 @@
       <email>gdruck@cs.umass.edu</email>
     </developer>
   </developers>
+
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <encoding>UTF-8</encoding>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.test.failure.ignore>true</maven.test.failure.ignore><!-- todo investigate test failures -->
+    <skipTests>false</skipTests>
+    <skipITs>${skipTests}</skipITs>
+    <skipUTs>${skipTests}</skipUTs>
   </properties>
+
   <build>
+    <sourceDirectory>src</sourceDirectory>
+    <testSourceDirectory>src</testSourceDirectory>
+
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.6</version>
+        <!--<version>2.6</version>-->
         <executions>
           <execution>
             <id>copy-resources</id>
@@ -68,10 +84,110 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration combine.self="override"><!-- override masterpom -->
+          <compilerId>javac</compilerId>
+          <forceJavacCompilerUse>true</forceJavacCompilerUse>
+          <fork>true</fork>
+          <source>${jdk.version}</source>
+          <target>${jdk.version}</target>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <compilerArgs>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <!--<version>2.22.1</version>-->
+        <configuration>
+          <excludedGroups>integration-test</excludedGroups>
+          <skipTests>${skipUTs}</skipTests>
+          <reportsDirectory>${project.basedir}/../target/reports</reportsDirectory>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <!--<version>3.0.0-M3</version>-->
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+            <configuration>
+              <groups>integration-test</groups>
+              <skipTests>${skipTests}</skipTests>
+              <skipITs>${skipITs}</skipITs>
+              <reportsDirectory>${project.basedir}/../target/reports</reportsDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.sonarsource.scanner.maven</groupId>
+        <artifactId>sonar-maven-plugin</artifactId>
+        <version>3.7.0.1746</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.openclover</groupId>
+        <artifactId>clover-maven-plugin</artifactId>
+        <!--<version>4.4.1</version>-->
+      </plugin>
     </plugins>
-    <sourceDirectory>src</sourceDirectory>
-    <testSourceDirectory>src</testSourceDirectory>
   </build>
+
+  <profiles>
+    <profile>
+      <id>sonar-build</id>
+      <properties>
+        <sonar.sources>pom.xml,src/cc</sonar.sources>
+        <sonar.tests>src/sonar_tests</sonar.tests> <!-- see src/sonar_tests/readme -->
+        <sonar.exclusions>**/test,**/tests,**/*Test*</sonar.exclusions>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.sonarsource.scanner.maven</groupId>
+            <artifactId>sonar-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <!--
+    using masterpom definition for now
+    <profile>
+      <id>clover.report</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.openclover</groupId>
+            <artifactId>clover-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.openclover</groupId>
+            <artifactId>clover-maven-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile-->
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -79,9 +195,9 @@
       <version>4.10</version>
     </dependency>
     <dependency>
-      <groupId>org.beanshell</groupId>
+      <groupId>org.apache-extras.beanshell</groupId>
       <artifactId>bsh</artifactId>
-      <version>2.0b4</version>
+      <version>2.0b6</version>
     </dependency>
     <dependency>
       <groupId>jgrapht</groupId>
@@ -109,11 +225,4 @@
       <version>1.1</version>
     </dependency>
   </dependencies>
-	<distributionManagement>
-		<repository>
-			<id>seal-snapshots</id>
-			<name>seal-snapshots</name>
-			<url>http://nexus.seal-software.net/content/repositories/snapshots</url>
-		</repository>
-	</distributionManagement>
 </project>

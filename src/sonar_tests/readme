@@ -1,0 +1,3 @@
+This file was created to get sonar plugin to not complain (this is a dummy file).
+It is associated with <sonar.tests>src/test</sonar.tests>
+in pom.xml.
